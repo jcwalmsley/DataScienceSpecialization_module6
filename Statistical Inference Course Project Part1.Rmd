@@ -1,0 +1,133 @@
+---
+title: ' Comparing Samples of the Random Exponential Distribution to the Central Limit
+  Theorem '
+author: "james c walmsley"
+date: "July 13, 2016"
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+  html_document:
+    toc: yes
+---
+
+## SYNOPSIS
+- This project investigates the properties of the mean and variance of the exponential distribution using R and compares them with the predictions of the Central Limit Theorem. 
+
+
+### SIMULATIONS USING R CODE
+- In this analysis a random exponential distribution is simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of an exponential distribution is 1/lambda and the standard deviation is also 1/lambda. In this experiment we will set lambda = 0.2 for all simulations. Next we'll investigate the distribution of the (averages or means) of 40 sample exponentials. Each distribution will be generated fron a thousand simulations.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+### For this project we'll investigate the exponential distribution in R and compare it with the Central Limit Theorem by first simulating the distribution of 1000 random exponentials and plotting the resulting histogram. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter.  
+
+```{r plotfigs1&2, echo=TRUE, cache=TRUE}
+# load the following packages
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(stats)
+# set the seed number for reproducibility
+set.seed(16)
+# set the sample size to n = 40 
+n <- 40
+#set lambda or the rate = 0.2,  
+lambda <- 0.2
+# the theoretical standard deviation for the random exponential distribution = 1/lmabda
+sd = 1/lambda
+# the mean for the random exponential distribution also = 1/lambda
+mu <- 1/lambda
+# set number of simulations to 1000
+nosim <- 1000
+
+# set plot parameters = one row, two columns 
+par(mfrow = c(1, 1), mar = c(4, 4, 2, 1))
+
+# step one
+        # generate 1000 random exponential variables & plot a histogram  
+        # (p1) of them
+p1 <- rexp(nosim)
+names(p1) <- c("Iteration", "Value")
+hist(p1,
+col = "steelblue",
+main = "Figure 1, Histogram of 1K Random Exponentials",
+xlab = "Values",
+ylab = "Frequency")
+rug(p1, col = "purple")
+```
+
+
+
+
+
+```{r plots3and4, echo=TRUE, cache=TRUE}
+# load the following packages
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(stats)
+# set the seed number for reproducibility
+set.seed(16)
+# set the sample size to n = 40 
+n <- 40
+#set lambda or the rate = 0.2,  
+lambda <- 0.2
+# the theoretical standard deviation for the random exponential distribution = 1/lmabda
+sd = 1/lambda
+# the mean for the random exponential distribution also = 1/lambda
+mu <- 1/lambda
+# set number of simulations to 1000
+nosim <- 1000
+
+# set plot parameters = one row, two columns 
+par(mfrow = c(1, 1), mar = c(4, 4, 2, 1))
+
+mean40randexponentials <- rdply(nosim, mean(rexp(n,lambda)))
+head(mean40randexponentials)
+names(mean40randexponentials) <- c("Iteration", "Values")
+hist(mean40randexponentials$Values, breaks = 120, col = "steelblue", prob = TRUE,
+main = " Figure 2, The Distribution of 1,000 means of 40 Randomly Sampled Exponentials",
+xlab = "Mean",
+ylab = "Frequency")
+abline(v = mu, col = "yellow", lwd = 4)
+abline(v = median(mean40randexponentials$Values), col = "red", lwd = 4)
+m4 <- mean40randexponentials
+lines(density(m4$Values), lwd = 3, lty = 1, col = "black")
+# abline(v = -sd^2, col = "orange", lwd = 3, lty = 1)
+legend('topright', c("Simulated", "Normal"), lty=c(1,2), lwd = c(3,3), col=c("black", "magenta"))
+rug(mean40randexponentials$Values, col = "purple")
+legend("topleft", c("t-Mean", "s-Mean"), lty = 1, lwd = c(4,4), col = c("yellow", "red"))
+```
+
+
+### SAMPLE MEAN VS THEORETICAL MEAN WITH FIGURES AND TEXT TITLES AND LABLES
+- The population mean is the center of mass of population represented by the blue histogram.
+- The sample mean is the center of mass of the observed data represented by the red bar just to the left of the theoretical mean = 1/lambda or 1/0.2 = 5.
+- The sample mean is a good estimate of the population mean provided n = number of samples is large enough, generally 30 or more.
+- The sample mean is unbiased: the population mean of its distribution is the mean that it’s trying to estimate shown by its close proximity to the theoretical mean with a value of 5.
+- The more data that goes into the sample mean, the more. concentrated its density / mass function is around the population mean. As n = sample size, increases its variance from the population mean decreases in accordance with the Central Limit Theorem. 
+
+
+
+### SAMPLE VARIANCE VS THEORETICAL VARIANCE WITH FIGURES AND TEXT TITLES AND LABELS
+- The sample variance, S^2, estimates the population variance, \sigma^2.
+- The distribution of the sample variance is centered around \sigma^2.
+- The variance of the sample mean is \sigma^2 / n.
+- Its logical estimate is s^2 / n.
+- The logical estimate of the standard error is S / \sqrt{n}.
+- S, the standard deviation, talks about how variable the population is.
+- S/\sqrt{n}, the standard error, talks about how variable averages of random samples of size n from the population are.
+
+
+### DISTRIBUION VIA FIGURES AND TEXT WITH TITLES AND LABLES
+- In Figure 1, "The Distribution of 1,000 means of 40 Randomly Sampled Exponentials" the shape of the distribution is more gaussian or normal bell curve shaped in appearance than that of Figure 2, "Histogram of 1K Random Exponentials" that is more poisson shpaed or skewed more to the larger values of the exponential varialbes in the distribution
+
